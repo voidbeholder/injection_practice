@@ -137,14 +137,17 @@ class AnthropicLLM(LLM):
             "model": self.model,
             "system": system,
             "messages": _to_anthropic(messages),
-            "temperature": self.temperature,
             "max_tokens": self.max_tokens,
         }
         if tools:
             request["tools"] = [{"name": t["name"], "description": t["description"],
                                  "input_schema": t["parameters"]} for t in tools]
-        if self.extra_body:
-            request["extra_body"] = self.extra_body
+
+        # temperature and any extra body options go through extra_body
+        body = dict(self.extra_body or {})
+        body.setdefault("temperature", self.temperature)
+        request["extra_body"] = body
+
         response = self.client.messages.create(**request)
         self.usage.requests += 1
         self.usage.input_tokens += response.usage.input_tokens or 0
