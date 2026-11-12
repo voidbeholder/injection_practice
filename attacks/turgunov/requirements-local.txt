@@ -1,0 +1,4 @@
+# Install from the repository root:
+# python -m pip install -r attacks/turgunov/requirements-local.txt
+-r ../../requirements.txt
+anthropic==0.40.0
